@@ -1,0 +1,28 @@
+---
+title: "Rmarkdown_Proyecto_final"
+author: "Alicia Díaz Castillo"
+date: "18/11/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## EXPRESIONES REGULARES
+
+En esta sección seleccionaremos dos páginas web explicando expresiones regulares en R.
+ 
+La primera es <http://rpubs.com/ydmarinb/429756>, esta me gusta mucho, me parece que viene muy bien explicado y estructurado. Al empezar da una breve explicación sobre que son las expresiones regulares. Además, está estructurado de una manera para que el lector lo comprenda al momento, y si quiere algo en especial, solo tiene que pinchar en el índice. En cada parte viene con un ejemplo para enseñar como se usaría cada expresión. Y además está creado con Rmarkdown.
+
+La segunda es <http://www.diegocalvo.es/expresiones-regulares-en-r/>, comparado con la anterior me parece que la estructura no es tan buena. Desde mi punto de vista le falta una pequeña explicacción para los que no saben que son, y se centra menos en la explicación de cada función. 
+ 
+
+## RMARKDOWN
+.
+
+En esta sección vamos a comparar dos páginas web en las que expliquen Rmardown.
+
+Empezaremos con <https://bookdown.org/gboccardo/manual-ED-UCH/introduccion-al-uso-de-rmarkdown-para-la-compilacion-de-resultados-de-rstudio-en-diferentes-formatos.html#tabla-de-estadisticos-univariados>. Lo contenidos estan muy bien explicados, en profundidad. Y te explica como crear todo tipo de elementos como tablas o listas. La estructura de como viene organizado el contenido esta muy bien ya que explica del contenido más siemple al más complicado.
+
+Por último, <https://rpubs.com/JohanMarin/Rmarkdown>. Desde mi punto de vista este es más visual que el anterior. En contenidos explican más o menos lo mismo, sin embargo, este explica como incluir imágenes, código in-line, strings externos. Aunque la estructura no es lo mejor, ya que explica como crear tablas o listas, antes de explicar lo más principal. Y un punto a su favor es que esta hecho en Rmarkdown.
