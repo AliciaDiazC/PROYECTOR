@@ -26,3 +26,14 @@ En esta sección vamos a comparar dos páginas web en las que expliquen Rmardown
 Empezaremos con <https://bookdown.org/gboccardo/manual-ED-UCH/introduccion-al-uso-de-rmarkdown-para-la-compilacion-de-resultados-de-rstudio-en-diferentes-formatos.html#tabla-de-estadisticos-univariados>. Lo contenidos estan muy bien explicados, en profundidad. Y te explica como crear todo tipo de elementos como tablas o listas. La estructura de como viene organizado el contenido esta muy bien ya que explica del contenido más siemple al más complicado.
 
 Por último, <https://rpubs.com/JohanMarin/Rmarkdown>. Desde mi punto de vista este es más visual que el anterior. En contenidos explican más o menos lo mismo, sin embargo, este explica como incluir imágenes, código in-line, strings externos. Aunque la estructura no es lo mejor, ya que explica como crear tablas o listas, antes de explicar lo más principal. Y un punto a su favor es que esta hecho en Rmarkdown.
+
+## ESTUDIO DE LOS VOTOS DEL PAÍS VASCO EN EL 2016.
+
+Los datos los he obtenido de la pagina web <http://opendata.esri.es/datasets/pais-vasco-elecciones-auton%C3%B3micas-2016/geoservice>, usando su API, con formato geojson. 
+
+```{r json}
+library(rjson)
+aaaa <- readLines("https://opendata.arcgis.com/datasets/828179cabe6f479691b08560f41af197_0.geojson")
+aaaa <- fromJSON(aaaa)
+aaaa
+```
