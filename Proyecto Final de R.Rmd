@@ -29,11 +29,18 @@ Por último, <https://rpubs.com/JohanMarin/Rmarkdown>. Desde mi punto de vista e
 
 ## ESTUDIO DE LOS VOTOS DEL PAÍS VASCO EN EL 2016.
 
-Los datos los he obtenido de la pagina web <http://opendata.esri.es/datasets/pais-vasco-elecciones-auton%C3%B3micas-2016/geoservice>, usando su API, con formato geojson. 
+Los datos los he obtenido de la pagina web <http://opendata.esri.es/datasets/pais-vasco-elecciones-auton%C3%B3micas-2016/geoservice>, usando su API, con formato geojson. Primeramente lo transformamos a formato tabla, y la iremos mejorando estéticamente.
 
-```{r json}
+```{r json, echo=FALSE, message=FALSE, warning=FALSE}
 library(rjson)
-aaaa <- readLines("https://opendata.arcgis.com/datasets/828179cabe6f479691b08560f41af197_0.geojson")
-aaaa <- fromJSON(aaaa)
-aaaa
+library(jsonlite)
+votos_json <- readLines("https://opendata.arcgis.com/datasets/828179cabe6f479691b08560f41af197_0.geojson", encoding = "UTF-8")
+Votos_list <- fromJSON(votos_json, flatten = TRUE)
+```
+```{r mej, echo=FALSE, message=FALSE, warning=FALSE}
+Votos <- Votos_list$features
+colnames(Votos) <-gsub("properties.", "", colnames(Votos))
+Votos$type <- NULL
+Votos$geometry.type <- NULL
+Votos$geometry.coordinates <- NULL
 ```
