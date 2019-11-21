@@ -29,7 +29,7 @@ Por último, <https://rpubs.com/JohanMarin/Rmarkdown>. Desde mi punto de vista e
 
 ## ESTUDIO DE LOS VOTOS DEL PAÍS VASCO EN EL 2016.
 
-Los datos los he obtenido de la pagina web <http://opendata.esri.es/datasets/pais-vasco-elecciones-auton%C3%B3micas-2016/geoservice>, usando su API, con formato geojson. Primeramente lo transformamos a formato tabla, y la iremos mejorando estéticamente.
+Los datos los he obtenido de la pagina web <http://opendata.esri.es/datasets/pais-vasco-elecciones-auton%C3%B3micas-2016/geoservice>, usando su API, con formato geojson. Primeramente lo transformamos a formato tabla, y la iremos mejorando estéticamente, renombrando las columnas, eliminando columnas que no daban información y transfromando el formato de la fecha en fecha.
 
 ```{r json, echo=FALSE, message=FALSE, warning=FALSE}
 library(rjson)
@@ -44,3 +44,59 @@ Votos$type <- NULL
 Votos$geometry.type <- NULL
 Votos$geometry.coordinates <- NULL
 ```
+```{r fecha, echo=FALSE, message=FALSE, warning=FALSE}
+library(lubridate)
+Votos$Fecha <- ymd_hms(Votos$Fecha, tz = "Europe/Madrid")
+```
+ (((Escribir la tabla en forma bonita)))
+ 
+ Ya que tenemos la tabla vamos a hacer un pequeño estudio.
+ 
+```{r censo, echo=FALSE, message=FALSE, warning=FALSE}
+head(Votos[order(-Votos$Censo),c("AMBITO","Censo")]) #hacerla mas bonita
+```
+
+Se observa que las ciudades más pobladas son las capitales de ....
+
+(((Porcentaje de votación)))
+
+```{r porc, echo=FALSE, message=FALSE, warning=FALSE}
+library(dplyr)
+Votos$Porcentaje_participacion <- Votos$Votantes*100/Votos$Censo
+Votos$Rank_censo <- rank(-Votos$Censo)
+Votos2 <- Votos %>%
+  select(AMBITO, Rank_censo, Porcentaje_participacion) %>%
+  filter(!is.na(Porcentaje_participacion)) %>%
+  arrange(Porcentaje_participacion)
+rbind(head(Votos2),tail(Votos2))
+```
+```{r plot, echo=FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+Votos1 <- Votos %>%
+    filter(!is.na(Censo)) 
+r <-  ggplot(Votos1, aes(x = Rank_censo, y = Porcentaje_participacion)) +geom_point() + geom_smooth(alpha = 0.5) 
+r
+``` 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
