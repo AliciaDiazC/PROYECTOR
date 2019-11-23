@@ -9,6 +9,9 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r enc, echo=FALSE, message=FALSE, warning=FALSE}
+options(Encoding="UTF-8")
+```
 ## EXPRESIONES REGULARES
 
 En esta sección seleccionaremos dos páginas web explicando expresiones regulares en R.
@@ -52,15 +55,15 @@ Votos$Fecha <- ymd_hms(Votos$Fecha, tz = "Europe/Madrid")
  
 ### Relación entre el censo y el número de votantes.
  
- Ya que tenemos la tabla vamos a hacer un pequeño estudio.
+ En esta sección relacionaremos el número de población de cada distrito con el número de votantes. Como se puede observar en la siguiente tabla las ciudades más pobladas coinciden con las capitales de Álava, Guipúzcoa y Vizcaya.
  
 ```{r censo, echo=FALSE, message=FALSE, warning=FALSE}
 head(Votos[order(-Votos$Censo),c("AMBITO","Censo")]) #hacerla mas bonita
 ```
 
-Se observa que las ciudades más pobladas son las capitales de ....
+Para poder realizar el estudio más facilmente creamos unas nuevas columnas que contienen el porcentaje de participación de cada distrito y el ranking del censo, en orden descendente, es decir el número uno será el más poblado. 
 
-(((Porcentaje de votación)))
+Representamos la relación entre porcentaje de población y el ranking del censo con la siguiente gráfica de puntos y una línea de regresión. Resultando una ligera relación indirecta, en los pueblos más pequeños aumenta el porcentaje de votaciones, mientras que en las grandes ciudades la media de votación es entorno a un 60%. También se observa que a medida que disminuye la población el porcentaje de población es más dispar, es decir, algunos pueblos llegan al 85% de participación en las elecciones, mientras que otros se quedan con un 53%.
 
 ```{r porc, echo=FALSE, message=FALSE, warning=FALSE}
 library(dplyr)
@@ -70,7 +73,6 @@ Votos2 <- Votos %>%
   select(AMBITO, Rank_censo, Porcentaje_participacion) %>%
   filter(!is.na(Porcentaje_participacion)) %>%
   arrange(Porcentaje_participacion)
-rbind(head(Votos2),tail(Votos2))
 ```
 ```{r plot, echo=FALSE, message=FALSE, warning=FALSE}
 library(ggplot2)
@@ -80,6 +82,7 @@ r <-  ggplot(Votos, aes(x = Rank_censo, y = Porcentaje_participacion)) +geom_poi
 r
 ``` 
 
+A continuación, estudiaremos el porcentaje de votación y el tipo de población de cada provincia, para ello identificamos cada provincia con el código postal de cada distrito creando una nueva columna llamada _Provincia_. 
 ```{r provincia, echo=FALSE, message=FALSE, warning=FALSE}
 Votos <- mutate(Votos,
              Provincia = codine) 
@@ -88,12 +91,16 @@ Votos$Provincia <- str_replace(Votos$Provincia,"01[0-9][0-9][0-9]", "Álava")
 Votos$Provincia <- str_replace(Votos$Provincia,"20[0-9][0-9][0-9]", "Guipúzcoa")
 Votos$Provincia <- str_replace(Votos$Provincia,"48[0-9][0-9][0-9]", "Vizcaya")
 ```
+En el siguiente diagrama de violin comparamos el porcentaje de población por provincias. Se puede apreciar que la media del porcentaje de votos es más alto en Vizcaya, además de estar más equilibrado. Guipúzcoa y Álava estan bastante igualadas. Sin embargo, en Álava es donde se registran los menores porcentajes y en Guipúzcoa los mayores. Además, Guipúzcoa destaca porque en la mayoría de distritos el porcentaje se encuentra alrededor de un 63%.
 
+(2 gráficas al lado)
 
 ```{r violin, echo=FALSE, message=FALSE, warning=FALSE}
 v  <-  ggplot(Votos, aes(x = Provincia, y = Porcentaje_participacion)) +geom_violin()
 v
 ```
+
+En el diagrama de violin del ranking del censo, hay una gran diferencia del tipo de población de Álava con los otros dos. En Álava lo que más hay son pueblos pequeños o medianos, entre el ranking 150 y 245, A partir de 150 va disminuyendo el número, y ciudades grandes, hay muy pocas. Entre Vizcaya y guipúzcoa no hay gran diferenciam lo único que en Vizcaya no se encuentran casi pueblos pequeños, y Guipúzcoa tiene mucha variendad entre tipo de población teniendo casi el mismo número de pueblos pequeños que ciudades grandes.
 
 
 ```{r censv, echo=FALSE, message=FALSE, warning=FALSE}
@@ -102,16 +109,37 @@ c
 ```
 
 
+Lo curioso es que el pueblo con menos habitantes del País Vasco pertenece a Guipúzcoa y es el que tiene mayor porcentaje de votos de todos los distritos.
 
-A mayor rank menor poblacion. Pueblos pequeños, alava y guipuzcoa, Vizcaya casi no tiene, ebtonces Vizcaya vota más, y Alava y guipuzcoa son parecidos, pero guipuzcoa tiene más ciudades grandes que vizcaya, algo falla. Guipuzcoa rsta mas equilibrado, tiene un poco de todo.
+No se encuentra ninguna relación entre el número de habitantes y de votos ya que en gráfico de puntos se observa que los pueblos pequeños tienen mayor porcentaje de voto. Y sin embargo en Álava que es donde más pueblos pequeños y medianos hay se vota menos en las otras dos provincias.
 
+((((((()))))))
+OBS: los pueblos pequeños que más votan son los de guipuzcoa y los que menos votan son los de alava
+Vizcaya vota más y tiene menos pueblos.
 
+```{r pueblos, echo=FALSE, message=FALSE, warning=FALSE}
+Votos3 <- Votos %>%
+  select(Provincia, Rank_censo, Porcentaje_participacion) %>%
+  filter(Provincia == "Guipúzcoa") %>%
+  arrange(Porcentaje_participacion)
+rbind(head(Votos3,10), tail(Votos3,10))
+```
+```{r pueblos2, echo=FALSE, message=FALSE, warning=FALSE}
+Votos3 <- Votos %>%
+  select(Provincia, Rank_censo, Porcentaje_participacion) %>%
+  filter(Provincia == "Álava") %>%
+  arrange(Porcentaje_participacion)
+rbind(head(Votos3,10), tail(Votos3,10))
+```
+```{r pueblos3, echo=FALSE, message=FALSE, warning=FALSE}
+Votos3 <- Votos %>%
+  select(Provincia, Rank_censo, Porcentaje_participacion) %>%
+  filter(Provincia == "Vizcaya") %>%
+  arrange(Porcentaje_participacion)
+rbind(head(Votos3,10), tail(Votos3,10))
+```
+Cuanto menos habitantes mas votan, en vizcaya los que menos vtan son los que mas habitantes tienen
+((((((()))))))
 
-
-
-
-
-
-
-
+Grafico, nulos, abstenciones, blancos, provincias, facetas.
 
