@@ -50,6 +50,8 @@ Votos$Fecha <- ymd_hms(Votos$Fecha, tz = "Europe/Madrid")
 ```
  (((Escribir la tabla en forma bonita)))
  
+### Relación entre el censo y el número de votantes.
+ 
  Ya que tenemos la tabla vamos a hacer un pequeño estudio.
  
 ```{r censo, echo=FALSE, message=FALSE, warning=FALSE}
@@ -72,23 +74,36 @@ rbind(head(Votos2),tail(Votos2))
 ```
 ```{r plot, echo=FALSE, message=FALSE, warning=FALSE}
 library(ggplot2)
-Votos1 <- Votos %>%
+Votos <- Votos %>%
     filter(!is.na(Censo)) 
-r <-  ggplot(Votos1, aes(x = Rank_censo, y = Porcentaje_participacion)) +geom_point() + geom_smooth(alpha = 0.5) 
+r <-  ggplot(Votos, aes(x = Rank_censo, y = Porcentaje_participacion)) +geom_point() + geom_smooth(alpha = 0.5) 
 r
 ``` 
 
+```{r provincia, echo=FALSE, message=FALSE, warning=FALSE}
+Votos <- mutate(Votos,
+             Provincia = codine) 
+library(stringr)
+Votos$Provincia <- str_replace(Votos$Provincia,"01[0-9][0-9][0-9]", "Álava")
+Votos$Provincia <- str_replace(Votos$Provincia,"20[0-9][0-9][0-9]", "Guipúzcoa")
+Votos$Provincia <- str_replace(Votos$Provincia,"48[0-9][0-9][0-9]", "Vizcaya")
+```
+
+
+```{r violin, echo=FALSE, message=FALSE, warning=FALSE}
+v  <-  ggplot(Votos, aes(x = Provincia, y = Porcentaje_participacion)) +geom_violin()
+v
+```
+
+
+```{r censv, echo=FALSE, message=FALSE, warning=FALSE}
+c<-  ggplot(Votos, aes(x = Provincia, y = Rank_censo)) +geom_violin()
+c
+```
 
 
 
-
-
-
-
-
-
-
-
+A mayor rank menor poblacion. Pueblos pequeños, alava y guipuzcoa, Vizcaya casi no tiene, ebtonces Vizcaya vota más, y Alava y guipuzcoa son parecidos, pero guipuzcoa tiene más ciudades grandes que vizcaya, algo falla. Guipuzcoa rsta mas equilibrado, tiene un poco de todo.
 
 
 
