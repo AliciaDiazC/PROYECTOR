@@ -12,6 +12,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r enc, echo=FALSE, message=FALSE, warning=FALSE}
 options(Encoding="UTF-8")
 ```
+Para una mayor personalización, considera los paquetes xtable, stargazer, pander, tables, y ascii.
+
 ## EXPRESIONES REGULARES
 
 En esta sección seleccionaremos dos páginas web explicando expresiones regulares en R.
@@ -130,15 +132,39 @@ Dividido por provincias.
 
 ```{r provpart, echo=FALSE, message=FALSE, warning=FALSE}
 library(reshape2)
+library(plyr)
 Votos4<- Votos %>%
-  select(Provincia, c(11:26)) 
-Votos4 <- melt(Votos4, id.vars = c("Provincia")) ## cambiar el nombre de variable por partidos y value por votos
-Prov_part <- dcast(Votos4, Provincia ~ variable, fun.aggregate = sum, value.var = "value")
-Prov_part
+  select(Provincia, Censo, c(11:26))
+Votos5 <- ddply(Votos4, .(Provincia), 
+             transform, total_hab = sum(Censo))
+V6 <-  melt(Votos5, id.vars = c("Provincia", "Censo","total_hab"))
+V7 <- ddply(V6, .(Provincia,total_hab, variable), summarize, total = sum(value))
+V8 <- ddply(V7, .(Provincia), 
+             transform, porc_part = total*100/total_hab)
+bar <-  ggplot(V8, aes(x=variable,y = porc_part)) +geom_bar(stat = "identity") + facet_grid(Provincia ~.)
+bar 
 ```
+
+
+
 Veamos cual gana. 
-```{r part}
-part <- t(Prov_part)
-colnames(part) <- c("Álava", "Guipúzcoa", "Vizcaya")
-part<- part[c(2:nrow(part)),]
+```{r v_3_p, echo=FALSE, message=FALSE, warning=FALSE}
+V9 <- ddply(V7, .(Provincia), 
+             transform, rank_partidos = rank(-total, ties = "random"))
+rank_part <- V9[V9$rank_partidos == 1 |V9$rank_partidos == 2|V9$rank_partidos == 3,c(1,3,5)]
+rank_part
 ```
+
+Los partidos más votados son EAJ_PNV y EH_BILDU.
+
+Vamos a hallar el partido más votado en cada distrito.
+```{r part, echo=FALSE, message=FALSE, warning=FALSE}
+c4<- Votos %>%
+  select(AMBITO, c(11:26))
+c5 <- melt(c4, id.vars = c("AMBITO"))
+c6 <- ddply(c5, .(AMBITO), 
+            transform, voto_part = rank(-value, ties = "random"))
+rank_voto <-c6[c6$voto_part == 1,c(1,2,3)]
+head(rank_voto)
+```
+Solo me falta el mapa.
