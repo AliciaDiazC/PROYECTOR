@@ -31,7 +31,7 @@ La segunda es <http://www.diegocalvo.es/expresiones-regulares-en-r/>, comparado 
 
 ## RMARKDOWN
 
-En esta sección vamos a comparar dos páginas web en las que expliquen Rmardown.
+En esta sección vamos a comparar dos páginas web en las que expliquen Rmarkdown.
 
 ### Bookdown
 En la página web <https://bookdown.org/gboccardo/manual-ED-UCH/introduccion-al-uso-de-rmarkdown-para-la-compilacion-de-resultados-de-rstudio-en-diferentes-formatos.html#tabla-de-estadisticos-univariados>. Lo contenidos estan muy bien explicados, en profundidad. Y explica como crear todo tipo de elementos como tablas o listas. La estructura de como viene organizado el contenido esta muy bien ya que explica del contenido más simple al más complejo.
