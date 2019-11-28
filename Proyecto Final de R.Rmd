@@ -134,7 +134,7 @@ c
 
 Lo curioso es que el pueblo con menos habitantes del País Vasco pertenece a Guipúzcoa y es el que tiene mayor porcentaje de votos de todos los distritos.
 
-No se encuentra ninguna relación entre el número de habitantes y de votos ya que en elgráfico de puntos se observa que los pueblos pequeños tienen mayor porcentaje de voto y en las ciudades grandes menos. En Vizcaya, por lo general se vota más en todos los distritos, sean del tipo que sean.
+No se encuentra ninguna relación entre el número de habitantes y de votos ya que en el gráfico de puntos se observa que los pueblos pequeños tienen mayor porcentaje de voto y en las ciudades grandes menos. En Vizcaya, por lo general se vota más en todos los distritos, sean del tipo que sean.
 
 ### Partidos políticos.
 
