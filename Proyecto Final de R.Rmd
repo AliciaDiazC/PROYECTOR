@@ -16,20 +16,17 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r library, echo=FALSE, message=FALSE, warning=FALSE}
 library(prettydoc)
 ```
-```{r enc, echo=FALSE, message=FALSE, warning=FALSE}
 
-```
-Para una mayor personalización, considera los paquetes xtable, stargazer, pander, tables, y ascii.
 
 ## EXPRESIONES REGULARES
 
 En esta sección seleccionaremos dos páginas web explicando expresiones regulares en R.
 
 ### Rpubs
-Esta pagina web, <http://rpubs.com/ydmarinb/429756> me gusta mucho, me parece que viene muy bien explicado y estructurado. Al empezar da una breve explicación sobre que son las expresiones regulares. Además, está estructurado de una manera para que el lector lo comprenda al momento, y si quiere algo en especial, solo tiene que pinchar en el índice. En cada parte viene con un ejemplo para enseñar como se usaría cada expresión. Y además está creado con Rmarkdown.
+En esta página web, <http://rpubs.com/ydmarinb/429756> me parece que viene muy bien explicado y estructurado. Al empezar da una breve explicación sobre que son las expresiones regulares. Además, está estructurado de una manera para que el lector lo comprenda al momento, y si quiere algo en especial, solo tiene que pinchar en el índice. En cada parte viene con un ejemplo para enseñar como se usaría cada expresión. Y además está creado con Rmarkdown.
 
 ### Diego Calvo
-La segunda es <http://www.diegocalvo.es/expresiones-regulares-en-r/>, comparado con la anterior me parece que la estructura no es tan buena. En mi opinión, le falta una pequeña explicacción para los que no saben que nada sobre expresiones regulares, y se centra menos en la explicación de cada función. 
+La segunda es <http://www.diegocalvo.es/expresiones-regulares-en-r/>, comparado con la anterior me parece que la estructura no es tan buena. En mi opinión, le falta una pequeña explicación para los que no saben que nada sobre expresiones regulares, y se centra menos en la explicación de cada función. 
  
 
 ## RMARKDOWN
@@ -40,11 +37,11 @@ En esta sección vamos a comparar dos páginas web en las que expliquen Rmardown
 En la página web <https://bookdown.org/gboccardo/manual-ED-UCH/introduccion-al-uso-de-rmarkdown-para-la-compilacion-de-resultados-de-rstudio-en-diferentes-formatos.html#tabla-de-estadisticos-univariados>. Lo contenidos estan muy bien explicados, en profundidad. Y explica como crear todo tipo de elementos como tablas o listas. La estructura de como viene organizado el contenido esta muy bien ya que explica del contenido más simple al más complejo.
 
 ### Rpubs
-Desde mi punto de vista, <https://rpubs.com/JohanMarin/Rmarkdown> es más visual que el anterior. En contenidos explican más o menos lo mismo, sin embargo, este explica como incluir imágenes, código in-line, strings externos. Aunque la estructura no es lo mejor, ya que explica como crear tablas o listas, antes de explicar lo más principal. Un punto a su favor es que esta hecho en Rmarkdown.
+Desde mi punto de vista, <https://rpubs.com/JohanMarin/Rmarkdown> es más visual que el anterior. En contenidos explican más o menos lo mismo, sin embargo, este explica como incluir imágenes, código in-line, strings externos. Aunque la estructura no es la mejor, ya que explica como crear tablas o listas, antes de explicar lo más principal. Un punto a su favor es que esta hecho en Rmarkdown.
 
 ## ESTUDIO DE LOS VOTOS DEL PAÍS VASCO EN EL 2016.
 
-Los datos los he obtenido de la pagina web <http://opendata.esri.es/datasets/pais-vasco-elecciones-auton%C3%B3micas-2016/geoservice>, usando su API, con formato geojson. Primeramente lo transformamos a formato tabla, y la iremos mejorando estéticamente, renombrando las columnas, eliminando columnas que no daban información y transfromando el formato de la fecha en fecha.
+Los datos los he obtenido de la página web <http://opendata.esri.es/datasets/pais-vasco-elecciones-auton%C3%B3micas-2016/geoservice>, usando su API, con formato geojson. Primeramente lo transformamos a formato tabla, y la iremos mejorando estéticamente, renombrando las columnas, eliminando columnas que no daban información y transfromando el formato de la fecha en fecha.
 
 ```{r json, echo=FALSE, message=FALSE, warning=FALSE}
 library(jsonlite)
@@ -82,10 +79,9 @@ knitr::kable(head(Votos, 10), fontsize = 10,"html")  %>%
 ```{r censo, echo=FALSE, message=FALSE, warning=FALSE}
 knitr::kable(head(Votos[order(-Votos$Censo),c("AMBITO","Censo")])) %>%
   kable_styling(full_width = F, font_size = 12, position = "float_right")
-#hacerla mas bonita
 ```
 
-Para poder realizar el estudio más facilmente creamos unas nuevas columnas que contienen el porcentaje de participación de cada distrito y el ranking del censo, en orden descendente, es decir el número uno será el más poblado. 
+Para poder realizar el estudio más fácilmente creamos nuevas columnas que contienen el _porcentaje de participación_ de cada distrito y el _ranking del censo_, en orden descendente, es decir el número uno será el más poblado. 
 
 Representamos la relación entre porcentaje de población y el ranking del censo con la siguiente gráfica de puntos y una línea de regresión. Resultando una ligera relación indirecta, en los pueblos más pequeños aumenta el porcentaje de votaciones, mientras que en las grandes ciudades la media de votación es entorno a un 60%. También se observa que a medida que disminuye la población el porcentaje de población es más dispar, es decir, algunos pueblos llegan al 85% de participación en las elecciones, mientras que otros se quedan con un 53%.
 
@@ -108,23 +104,26 @@ Votos$Provincia <- str_replace(Votos$Provincia,"48[0-9][0-9][0-9]", "Vizcaya")
 ```
 ```{r plot, echo=FALSE, message=FALSE, warning=FALSE}
 library(ggplot2)
+library(plotly)
 Votos <- Votos %>%
     filter(!is.na(Censo)) 
 r <-  ggplot(Votos, aes(x = Rank_censo, y = Porcentaje_participacion, colour = Provincia)) +xlab("Ranking del censo") + ylab("Porcentaje de participación en las elecciones") +geom_point() + geom_smooth(alpha = 0.1,fill = "lightcyan4") +scale_color_manual(values=c("mediumpurple3", "Lightseagreen", "mediumvioletred")) +theme_light()
+r <- ggplotly(r)  %>%
+  add_trace(text=c("Censo", "Votantes"))
 r
 ``` 
 
-A continuación, estudiaremos el porcentaje de votación y el tipo de población de cada provincia, para ello identificamos cada provincia con el código postal de cada distrito creando una nueva columna llamada _Provincia_. 
+A continuación, estudiaremos el **porcentaje de votación** y el tipo de **población** de cada provincia, para ello identificamos cada provincia con el código postal de cada distrito creando una nueva columna llamada _Provincia_. 
 
-En el siguiente diagrama de violin comparamos el porcentaje de población por provincias. Se puede apreciar que la media del porcentaje de votos es más alto en Vizcaya, además de estar más equilibrado. Guipúzcoa y Álava estan bastante igualadas. Sin embargo, en Álava es donde se registran los menores porcentajes y en Guipúzcoa los mayores. Además, Guipúzcoa destaca porque en la mayoría de distritos el porcentaje se encuentra alrededor de un 63%.
+En el siguiente diagrama de violin comparamos el **porcentaje de población** por **provincias**. Se puede apreciar que la media del porcentaje de votos es más alto en Vizcaya, además de estar más equilibrado. Guipúzcoa y Álava estan bastante igualadas. Sin embargo, en Álava es donde se registran los menores porcentajes y en Guipúzcoa los mayores. Además, Guipúzcoa destaca porque en la mayoría de distritos el porcentaje se encuentra alrededor de un 63%.
 
 ```{r violin, echo=FALSE, message=FALSE, warning=FALSE}
-v  <-  ggplot(Votos, aes(x = Provincia, y = Porcentaje_participacion)) +geom_violin(trim=FALSE, fill="Darkslategray3")+
+v  <-  ggplot(Votos, aes(x = Provincia, y = Porcentaje_participacion), size =5) +geom_violin(trim=FALSE, fill="Darkslategray3")+
   geom_boxplot(width=0.1, fill="white") + theme_classic()
 v
 ```
 
-En el diagrama de violin del ranking del censo, hay una gran diferencia del tipo de población de Álava con los otros dos. En Álava lo que más hay son pueblos pequeños o medianos, entre el ranking 150 y 245, A partir de 150 va disminuyendo el número, y ciudades grandes, hay muy pocas. Entre Vizcaya y guipúzcoa no hay gran diferencia, lo único que en Vizcaya no se encuentran casi pueblos pequeños, y Guipúzcoa tiene mucha variendad entre tipo de población teniendo casi el mismo número de pueblos pequeños que ciudades grandes.
+En el diagrama de violin del **ranking del censo**, hay una gran diferencia del tipo de población de Álava con los otros dos. En Álava lo que más hay son pueblos pequeños o medianos, entre el ranking 150 y 245, A partir de 150 va disminuyendo el número, y ciudades grandes, hay muy pocas. Entre Vizcaya y guipúzcoa no hay gran diferencia, lo único que en Vizcaya no se encuentran casi pueblos pequeños, y Guipúzcoa tiene mucha variendad entre tipo de población teniendo casi el mismo número de pueblos pequeños que ciudades grandes.
 
 
 ```{r censv, echo=FALSE, message=FALSE, warning=FALSE}
@@ -135,11 +134,11 @@ c
 
 Lo curioso es que el pueblo con menos habitantes del País Vasco pertenece a Guipúzcoa y es el que tiene mayor porcentaje de votos de todos los distritos.
 
-No se encuentra ninguna relación entre el número de habitantes y de votos ya que en eñ  gráfico de puntos se observa que los pueblos pequeños tienen mayor porcentaje de voto y en las ciudades grandes menos. En Vizcaya, por lo general se vota más en todos los distritos, sean del tipo que sean.
+No se encuentra ninguna relación entre el número de habitantes y de votos ya que en elgráfico de puntos se observa que los pueblos pequeños tienen mayor porcentaje de voto y en las ciudades grandes menos. En Vizcaya, por lo general se vota más en todos los distritos, sean del tipo que sean.
 
-### Partidos.
+### Partidos políticos.
 
-En esta sección se estudiará cuales son los partidos políticos más votados en cada provincia. Para ello se creará el siguiente diagrama de barras, en el cual en cada provincia se contabiliza el porcentaje de votos respecto a la población de cada una. Se puede ver que el partido ganador en las tres provincias es el PNV(Partido Nacionalista Vasco), seguido por BILDU en Vizcaya Y Guipúcua. En Álava no hay una gran diferencia entre el PP y BILDU, ganando el PP. Además hay partidos que no consiguen ni un voto, como Vox en Vizcaya.
+En esta sección se estudiará cuales son **los partidos políticos más votados en cada provincia**. Para ello se creará el siguiente diagrama de barras, en el cual en cada provincia se contabiliza el porcentaje de votos respecto a la población de cada una. Se puede ver que el partido ganador en las tres provincias es el PNV(Partido Nacionalista Vasco), seguido por BILDU en Vizcaya Y Guipúzcua. En Álava no hay una gran diferencia entre el PP y BILDU, ganando el PP. Además hay partidos que no consiguen ni un voto, como Vox en Vizcaya.
 
 ```{r provpart, echo=FALSE, message=FALSE, warning=FALSE}
 library(reshape2)
@@ -157,52 +156,12 @@ V8 <- ddply(V7, .(Provincia),
 bar <-  ggplot(V8, aes(x=variable,y = porc_part), fill=Color) + geom_bar(stat = "identity", fill = "cadetblue4", size = 0.5) + facet_grid(Provincia ~.) + theme(panel.background = element_rect(fill="white", size= 0.5,linetype = "solid", color = "black", colour = "black"),  
         panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "lavender"),
         axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.8))) +  xlab("Partidos políticos") + ylab("Porcentaje de votos") + ggtitle("Porcentaje de votos de cada partido político en las provincias del País Vasco") 
-  
-bar 
+ggplotly(bar, text=c("porc_part"))
 ```
+ 
 
 
-Los tres partidos ganadores de cada provincia se pueden distinguir en la siguiente tabla.  
 
-```{r v_3_p, echo=FALSE, message=FALSE, warning=FALSE}
-V9 <- ddply(V7, .(Provincia), 
-             transform, rank_partidos = rank(-total, ties = "random"))
-rank_part <- V9[V9$rank_partidos == 1 |V9$rank_partidos == 2|V9$rank_partidos == 3,c(1,3,5)]
-knitr:: kable(rank_part) %>%
-  kable_styling(full_width = F, font_size = 10)
-```
-
-A continuación, hemos hallado los partidos políticos que han ganado en cada distrito, alguno de ellos se ven reflejados en la siguiente tabla .
-
-```{r part, echo=FALSE, message=FALSE, warning=FALSE}
-c4<- Votos %>%
-  select(AMBITO, c(11:26))
-c5 <- melt(c4, id.vars = c("AMBITO"))
-c6 <- ddply(c5, .(AMBITO), 
-            transform, voto_part = rank(-value, ties = "random"))
-rank_voto <-c6[c6$voto_part == 1,c(1,2,3)]
-knitr::kable(head(rank_voto)) %>%
-  kable_styling(full_width = F, font_size = 10) #position = "float_right")
-```
-Solo me falta el mapa.
-```{r coord, echo=FALSE, message=FALSE, warning=FALSE}
-coord <- c(coord$geometry.type, coord$geometry.coordinates)
-```
-
-```{r cod, echo=FALSE, message=FALSE, warning=FALSE}
-#library(leaflet)
-#library(sp)
-#library(maptools)
-#geo <- sptable(Votos$codine)
-#sp.polygons(Votos$codine)
-#[,c(1,5,6)] #Extraemos las coordenadas de los poligonos
-#means <- aggregate(geo[,2:3], geo[1], mean) #Obtenemos el centroide de los poligonos
-#colnames(means) <- c("ID","lat","lon")
-#means$ID <- cpval$COD_POSTAL
-
-#cpval@data$lat <- means$lat
-#cpval@data$lon <- means$lon
-```
 
 
 
